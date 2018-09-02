@@ -87,85 +87,100 @@
 </style>
 
 <template>
-  <view class="photo-container">
-    <view class="img-list">
-      <repeat for="{{img}}" key="index" index="index" item="item">
-        <view class="box-photo-img">
-          <image class="photo-img" mode="aspectFill" src="{{item.path}}" />
-          <view class="img-list" @tap="deletePhoto({{index}})">删除</view>
+  <view>
+    <view class="photo-container" hidden="{{preview}}">
+      <view class="img-list">
+        <repeat for="{{img}}" key="index" index="index" item="item">
+          <view class="box-photo-img">
+            <image class="photo-img" @tap="imgOnclick({{index}})" mode="aspectFill" src="{{item.showPath || item.path}}" />
+            <view class="img-list" @tap="deletePhoto({{index}})">删除</view>
+          </view>
+        </repeat>
+      </view>
+      <view class="foot">
+        <view class="add" @tap="addPhotos">
+          <image src="{{'../img/add.png'}}" alt="" class="add-image" />
+          <view class="add-description">添加图片</view>
         </view>
-      </repeat>
-    </view>
-    <view class="foot">
-      <view class="add" @tap="addPhotos">
-        <image src="{{'../img/add.png'}}" alt="" class="add-image" />
-        <view class="add-description">添加图片</view>
-      </view>
-      <view class="submit">
-        <view class="photo-all-num">已选30张</view>
-        <button type="primary" class="button-border" @tap="submit">完成</button>
+        <view class="submit">
+          <view class="photo-all-num">已选30张</view>
+          <button type="primary" class="button-border" @tap="submit">完成</button>
+        </view>
       </view>
     </view>
+    <crop :preview.sync="preview" :imgConfig.sync="imgConfig" />
   </view>
 </template>
 
 <script>
-  import wepy from 'wepy'
-  export default class Index extends wepy.page {
-    data = {
-      img: [
-        {
-          path: 'http://tmp/wx7404fc6a2e39ce58.o6zAJszAr7nhdGj90crlZL8XhsVk.OPkP2vGqLqvO59ca166caec443646501eac70db3877f.jpg'
-        },
-        {
-          path: 'http://tmp/wx7404fc6a2e39ce58.o6zAJszAr7nhdGj90crlZL8XhsVk.OPkP2vGqLqvO59ca166caec443646501eac70db3877f.jpg'
-        }
-      ]
-    }
-    methods = {
-      addPhotos() {
-        let _this = this
-        wepy.chooseImage({
-          count: 9, // 默认9
-          sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
-          sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
-          success: function(res) {
-            console.log(res)
-            res.tempFiles.forEach((e, index) => {
-              wepy.getImageInfo({
-                src: res.tempFilePaths[index],
-                success: function (res) {
-                  console.log(res)
-                  e.width = res.width
-                  e.height = res.height
-                }
-              })
-            })
-            // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
-            // var tempFilePaths = res.tempFilePaths
-            console.log(res.tempFiles)
-            _this.img = [..._this.img, ...res.tempFiles]
-            console.log(_this.img)
-            _this.$apply()
-          }
-        })
+import wepy from 'wepy'
+import Crop from '@/components/crop'
+
+export default class Index extends wepy.page {
+  data = {
+    img: [
+      {
+        path: 'http://tmp/wx7404fc6a2e39ce58.o6zAJszAr7nhdGj90crlZL8XhsVk.RivNJGr8Z17C78d4f3eb65e7f73c592e0675048db41e.jpg'
       },
-      deletePhoto(index) {
-        let _this = this
-        wepy.showModal({
-          title: '删除照片',
-          content: '确定删除这张照片吗？',
-          success: function(res) {
-            if (res.confirm) {
-              _this.img.splice(index, 1)
-              _this.$apply()
-            } else if (res.cancel) {
-              console.log('用户点击取消')
-            }
-          }
-        })
-      },
-      submit() {}
-    }
+      {
+        path: 'http://tmp/wx7404fc6a2e39ce58.o6zAJszAr7nhdGj90crlZL8XhsVk.RivNJGr8Z17C78d4f3eb65e7f73c592e0675048db41e.jpg'
+      }
+    ],
+    preview: false,
+    imgConfig: []
   }
+  components = {
+    crop: Crop
+  }
+  methods = {
+    imgOnclick(index) {
+      this.preview = !this.preview
+      this.imgConfig = this.img[index]
+      // this.$invoke('cropper', 'pushOrigin', this.img[index].path)
+    },
+    addPhotos() {
+      let _this = this
+      wepy.chooseImage({
+        count: 9, // 默认9
+        sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+        sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+        success: function(res) {
+          console.log(res)
+          res.tempFiles.forEach((e, index) => {
+            wepy.getImageInfo({
+              src: res.tempFilePaths[index],
+              success: function(res) {
+                console.log(res)
+                e.width = res.width
+                e.height = res.height
+              }
+            })
+          })
+          // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
+          // var tempFilePaths = res.tempFilePaths
+          console.log(res.tempFiles)
+          _this.img = [..._this.img, ...res.tempFiles]
+          console.log(_this.img)
+          _this.$apply()
+        }
+      })
+    },
+    deletePhoto(index) {
+      let _this = this
+      wepy.showModal({
+        title: '删除照片',
+        content: '确定删除这张照片吗？',
+        success: function(res) {
+          if (res.confirm) {
+            _this.img.splice(index, 1)
+            _this.$apply()
+          } else if (res.cancel) {
+            console.log('用户点击取消')
+          }
+        }
+      })
+    },
+    submit() {}
+  }
+}
 </script>
