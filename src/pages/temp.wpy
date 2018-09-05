@@ -214,8 +214,8 @@
       communicate () {
         console.log(this.$name + ' tap')
 
-        this.$invoke('counter2', 'minus', 46, 6)
-        this.$invoke('counter1', 'plus', 46, 7)
+        this.$invoke('counter2', 'minus', 45, 6)
+        this.$invoke('counter1', 'plus', 45, 6)
 
         this.$broadcast('index-broadcast', 1, 3, 4)
       },
@@ -252,11 +252,11 @@
         if (userInfo) {
           self.userInfo = userInfo
         }
-        self.normalTitle = '标题已被修改123'
+        self.normalTitle = '标题已被修改'
 
-        self.setTimeoutTitle = '标题三秒后会被修改123'
+        self.setTimeoutTitle = '标题三秒后会被修改'
         setTimeout(() => {
-          self.setTimeoutTitle = '到三秒了123'
+          self.setTimeoutTitle = '到三秒了'
           self.$apply()
         }, 3000)
 
