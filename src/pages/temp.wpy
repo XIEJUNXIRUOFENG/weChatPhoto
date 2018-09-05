@@ -256,7 +256,7 @@
 
         self.setTimeoutTitle = '标题三秒后会被修改'
         setTimeout(() => {
-          self.setTimeoutTitle = '到三秒了'
+          self.setTimeoutTitle = '到三秒了123124'
           self.$apply()
         }, 3000)
 
