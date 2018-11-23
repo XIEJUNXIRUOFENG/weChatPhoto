@@ -100,10 +100,10 @@
       <view class="foot">
         <view class="add" @tap="addPhotos">
           <image src="{{'../img/add.png'}}" alt="" class="add-image" />
-          <view class="add-description">添加图片123</view>
+          <view class="add-description">添加图片123解骏</view>
         </view>
         <view class="submit">
-          <view class="photo-all-num">已选30张123</view>
+          <view class="photo-all-num">已选30张123解骏</view>
           <button type="primary" class="button-border" @tap="submit">完成</button>
         </view>
       </view>
