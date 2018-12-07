@@ -103,7 +103,7 @@
           <view class="add-description">添加图片</view>
         </view>
         <view class="submit">
-          <view class="photo-all-num">已选30张123</view>
+          <view class="photo-all-num">已选30张</view>
           <button type="primary" class="button-border" @tap="submit">完成</button>
         </view>
       </view>
